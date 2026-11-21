@@ -136,21 +136,32 @@
   }
 
   /** Troca Básico ⇄ Avançado com transição: desliza para a direita ao avançar e para a esquerda ao voltar. */
+  let modeTarget = null; // modo para onde uma transição em andamento está indo
+  let modeVT = null;
+  let wantedMode = null;
   function switchMode(m) {
-    if (m === mode) { window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' }); return; }
+    const current = modeTarget || mode;
+    if (m === current) { window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' }); return; }
+    if (modeVT) modeVT.skipTransition(); // clique rápido: termina a anterior na hora
+    wantedMode = m;
     const root = document.documentElement;
+    // qualquer transição (mesmo uma pulada que rode atrasada) aplica sempre o ÚLTIMO modo pedido
     const apply = () => {
-      setMode(m, { silent: true });
+      if (mode === wantedMode && root.dataset.mode === wantedMode) return;
+      setMode(wantedMode, { silent: true });
       cleanUrl();
       window.scrollTo(0, 0);
       heroes.forEach((h) => h.resize());
     };
     if (!document.startViewTransition || reduceMotion || document.hidden) { apply(); return; }
+    modeTarget = m;
     root.dataset.nav = m === 'advanced' ? 'forward' : 'back';
-    const vt = document.startViewTransition(apply);
+    const vt = modeVT = document.startViewTransition(apply);
     vt.ready.catch(() => {});
     if (vt.updateCallbackDone) vt.updateCallbackDone.catch(() => {});
-    vt.finished.catch(() => {}).finally(() => { delete root.dataset.nav; });
+    vt.finished.catch(() => {}).finally(() => {
+      if (modeVT === vt) { modeVT = null; modeTarget = null; delete root.dataset.nav; }
+    });
   }
 
   /* ---------- hero cubes ---------- */
