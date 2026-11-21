@@ -98,8 +98,11 @@
       this.root.addEventListener('pointercancel', onUp);
     }
 
+    /** Troca o estado na hora. Cancela qualquer animação em andamento (run/turn). */
     setState(st) {
+      this.version = (this.version || 0) + 1;
       this.state = clone(st);
+      for (const c of this.cubies) { c.el.style.transition = 'none'; c.el.style.transform = c.base; }
       this.paint();
     }
 
@@ -142,7 +145,10 @@
           c.el.style.transition = `transform ${dur}ms cubic-bezier(.45,.05,.25,1)`;
           c.el.style.transform = `${rot} ${c.base}`;
         });
+        const version = this.version || 0;
         const finish = () => {
+          // se o estado foi trocado no meio do giro, não aplica o movimento em cima do novo
+          if ((this.version || 0) !== version) { resolve(); return; }
           applyMove(this.state, mv);
           moving.forEach((c) => { c.el.style.transition = 'none'; c.el.style.transform = c.base; });
           this.paint();
@@ -152,9 +158,15 @@
       });
     }
 
+    /** Executa uma sequência; para sozinha se o estado for trocado no meio. Retorna true se terminou. */
     async run(alg, ms) {
       const moves = typeof alg === 'string' ? parse(alg) : alg;
-      for (const m of moves) await this.turn(m, ms);
+      const version = this.version || 0;
+      for (const m of moves) {
+        if ((this.version || 0) !== version) return false;
+        await this.turn(m, ms);
+      }
+      return (this.version || 0) === version;
     }
   }
 

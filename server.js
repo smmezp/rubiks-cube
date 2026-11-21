@@ -18,7 +18,14 @@ const TYPES = {
 };
 
 http.createServer((req, res) => {
-  let urlPath = decodeURIComponent(new URL(req.url, 'http://x').pathname);
+  const url = new URL(req.url, 'http://x');
+  let urlPath = decodeURIComponent(url.pathname);
+  // igual ao GitHub Pages: /cfop → /cfop/ (pasta com index.html)
+  const asDir = path.normalize(path.join(ROOT, urlPath));
+  if (!urlPath.endsWith('/') && !path.extname(urlPath) && asDir.startsWith(ROOT) && fs.existsSync(path.join(asDir, 'index.html'))) {
+    res.writeHead(301, { Location: urlPath + '/' + url.search });
+    return res.end();
+  }
   if (urlPath.endsWith('/')) urlPath += 'index.html';
   const file = path.normalize(path.join(ROOT, urlPath));
   if (!file.startsWith(ROOT)) { res.writeHead(403); return res.end('Forbidden'); }

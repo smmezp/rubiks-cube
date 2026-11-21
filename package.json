@@ -6,6 +6,7 @@
   "private": true,
   "scripts": {
     "start": "node server.js",
-    "bump": "node bump.js"
+    "build": "node build.js",
+    "bump": "node build.js"
   }
 }

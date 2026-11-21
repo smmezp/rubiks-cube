@@ -21,13 +21,11 @@
     (function () {
       var root = document.documentElement;
       root.classList.add('is-loading'); // sem transições até a página montar
-      try {
-        root.lang = localStorage.getItem('medeiros-lang') === 'pt' ? 'pt-BR' : 'en';
-        var mode = localStorage.getItem('cubo-mode') === 'advanced' ? 'advanced' : 'basic';
-        if (location.hash === '#avancado') mode = 'advanced';
-        if (location.hash === '#basico') mode = 'basic';
-        root.dataset.mode = mode;
-      } catch (e) { /* sem storage */ }
+      // links antigos com #avancado vão para o endereço novo …/cfop/
+      if (location.hash === '#avancado') { location.replace(new URL('cfop/', document.baseURI).href); return; }
+      // o modo vem do endereço: …/rubiks-cube/ = Básico, …/rubiks-cube/cfop/ = Avançado
+      root.dataset.mode = /\/cfop\/?$/.test(location.pathname) ? 'advanced' : 'basic';
+      try { root.lang = localStorage.getItem('medeiros-lang') === 'pt' ? 'pt-BR' : 'en'; } catch (e) { /* sem storage */ }
     })();
   </script>
   <!-- segura a 1ª pintura até o conteúdo e os scripts terminarem (evita flash) -->
@@ -35,10 +33,10 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=202611211614" />
-  <link rel="stylesheet" href="css/library.css?v=202611211614" />
-  <link rel="stylesheet" href="css/polish.css?v=202611211614" />
-  <link rel="stylesheet" href="css/responsive.css?v=202611211614" />
+  <link rel="stylesheet" href="css/style.css?v=202611211634" />
+  <link rel="stylesheet" href="css/library.css?v=202611211634" />
+  <link rel="stylesheet" href="css/polish.css?v=202611211634" />
+  <link rel="stylesheet" href="css/responsive.css?v=202611211634" />
 </head>
 <body>
   <!-- ================= HEADER + SELETOR DE MÉTODO + IDIOMA ================= -->
@@ -75,7 +73,7 @@
             <a href="#cfop" data-i18n="nav.what">What is it</a><a href="#etapas" data-i18n="nav.stages">Stages</a><a href="#biblioteca" data-i18n="nav.algs">Algorithms</a>
           </div>
         </nav>
-        <a class="timer-link" href="timer.html" data-i18n-title="nav.timerTitle" title="Speedcubing timer"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13.5" r="7.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 9.5v4l2.5 2M9.5 3h5M19 6.5l-1.5 1.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="nav.timer">Timer</span></a>
+        <a class="timer-link" href="timer/" data-i18n-title="nav.timerTitle" title="Speedcubing timer"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13.5" r="7.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 9.5v4l2.5 2M9.5 3h5M19 6.5l-1.5 1.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="nav.timer">Timer</span></a>
         <!-- seletor de idioma (mesmo do portfolio) -->
         <div class="lang-switch" data-lang-active="en" role="group" data-i18n-aria="lang.label" aria-label="Language">
           <span class="lang-thumb" aria-hidden="true"></span>
@@ -328,11 +326,11 @@
     </div>
   </div>
 
-  <script src="js/i18n.js?v=202611211614"></script>
-  <script src="js/cube.js?v=202611211614"></script>
-  <script src="js/data.js?v=202611211614"></script>
-  <script src="js/cube3d.js?v=202611211614"></script>
-  <script src="js/app.js?v=202611211614"></script>
+  <script src="js/i18n.js?v=202611211634"></script>
+  <script src="js/cube.js?v=202611211634"></script>
+  <script src="js/data.js?v=202611211634"></script>
+  <script src="js/cube3d.js?v=202611211634"></script>
+  <script src="js/app.js?v=202611211634"></script>
   <div id="render-ready" hidden></div>
 </body>
 </html>

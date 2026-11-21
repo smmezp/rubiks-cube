@@ -139,17 +139,23 @@
   let modeTarget = null; // modo para onde uma transição em andamento está indo
   let modeVT = null;
   let wantedMode = null;
-  function switchMode(m) {
+  /* endereços: …/rubiks-cube/ = Básico, …/rubiks-cube/cfop/ = Avançado (CFOP) */
+  const SITE_ROOT = new URL('./', document.baseURI).pathname; // "/rubiks-cube/" no GitHub Pages, "/" local
+  const modeUrl = (m) => SITE_ROOT + (m === 'advanced' ? 'cfop/' : '');
+  const modeFromPath = () => (/\/cfop\/?$/.test(location.pathname) ? 'advanced' : 'basic');
+
+  function switchMode(m, opts = {}) {
     const current = modeTarget || mode;
-    if (m === current) { window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' }); return; }
+    if (m === current) { if (!opts.fromHistory) window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' }); return; }
     if (modeVT) modeVT.skipTransition(); // clique rápido: termina a anterior na hora
     wantedMode = m;
+    // muda o endereço na hora do clique (o voltar do navegador volta para o modo anterior)
+    if (!opts.fromHistory && location.pathname !== modeUrl(m)) history.pushState({ mode: m }, '', modeUrl(m));
     const root = document.documentElement;
     // qualquer transição (mesmo uma pulada que rode atrasada) aplica sempre o ÚLTIMO modo pedido
     const apply = () => {
       if (mode === wantedMode && root.dataset.mode === wantedMode) return;
       setMode(wantedMode, { silent: true });
-      cleanUrl();
       window.scrollTo(0, 0);
       heroes.forEach((h) => h.resize());
     };
@@ -598,18 +604,17 @@
     ];
     document.addEventListener('visibilitychange', () => heroes.forEach((h) => h.sync()));
 
-    let initial = 'basic';
-    try { initial = localStorage.getItem('cubo-mode') || 'basic'; } catch (e) { /* ok */ }
-    // links antigos com #avancado / #basico ainda funcionam, mas a URL fica limpa
-    if (location.hash === '#avancado') initial = 'advanced';
-    if (location.hash === '#basico') initial = 'basic';
-    setMode(initial === 'advanced' ? 'advanced' : 'basic', { silent: true });
+    // o modo vem do endereço (/ ou /cfop/); "index.html" some do endereço
+    setMode(modeFromPath(), { silent: true });
+    if (/\/index\.html$/.test(location.pathname)) history.replaceState(null, '', modeUrl(mode) + location.search);
     const startHash = location.hash.slice(1);
     cleanUrl();
     if (startHash && startHash !== 'avancado' && startHash !== 'basico') {
       requestAnimationFrame(() => document.getElementById(startHash)?.scrollIntoView());
     }
     setupAnchors();
+    // voltar/avançar do navegador entre / e /cfop/
+    window.addEventListener('popstate', () => switchMode(modeFromPath(), { fromHistory: true }));
     // vidro líquido só quando a barra da biblioteca está "grudada" no topo
     const toolbar = $('.lib-toolbar');
     const checkStuck = () => {
@@ -623,9 +628,10 @@
     checkStuck();
 
     window.addEventListener('hashchange', () => {
-      if (location.hash === '#avancado' && mode !== 'advanced') setMode('advanced', { silent: true });
-      if (location.hash === '#basico' && mode !== 'basic') setMode('basic', { silent: true });
+      const h = location.hash;
       cleanUrl();
+      if (h === '#avancado') switchMode('advanced');
+      if (h === '#basico') switchMode('basic');
     });
   }
 

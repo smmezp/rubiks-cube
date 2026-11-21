@@ -81,10 +81,14 @@
   let scr = '';
   let prevScr = '';
   let cube = null;
+  // Embaralhamentos oficiais (WCA) são feitos com BRANCO em cima e VERDE na frente.
+  // O motor usa amarelo em cima / azul na frente, então giramos o cubo inteiro (x2) antes.
+  const WCA_START = () => Cube.apply(Cube.solved(), 'x2');
+  const scrambled = (s) => Cube.apply(WCA_START(), s);
   function setScramble(s) {
     scr = s;
     $('#tm-scramble').innerHTML = s.split(' ').map((m) => `<span>${m.replace(/'/g, '’')}</span>`).join(' ');
-    if (cube) cube.setState(Cube.apply(Cube.solved(), s));
+    if (cube) cube.setState(scrambled(s)); // também cancela um "ver embaralhando" em andamento
     $('#tm-prev').disabled = !prevScr;
   }
   function nextScramble() { prevScr = scr; setScramble(Cube.scramble()); }
@@ -290,10 +294,10 @@
   $('#tm-watch').addEventListener('click', async (e) => {
     const b = e.currentTarget; b.blur();
     if (!cube || cube.busy) return;
-    if (reduceMotion) { cube.setState(Cube.apply(Cube.solved(), scr)); return; }
+    if (reduceMotion) { cube.setState(scrambled(scr)); return; }
     cube.busy = true; b.disabled = true;
-    cube.setState(Cube.solved());
-    await cube.run(scr, 140);
+    cube.setState(WCA_START());
+    await cube.run(scr, 140); // se o embaralhamento mudar no meio, para sozinho
     cube.busy = false; b.disabled = false;
   });
   try { inspectionEl.checked = localStorage.getItem('cubo-inspection') === '1'; } catch (e) { /* ok */ }
@@ -310,7 +314,11 @@
   });
 
   /* ---------- início ---------- */
-  cube = new Cube3D($('#tm-cube'), { size: 40, rx: -26, ry: -36 });
+  // "Voltar ao guia" leva para o modo em que você estava: /rubiks-cube/ ou /rubiks-cube/cfop/
+  try {
+    if (localStorage.getItem('cubo-mode') === 'advanced') $$('[data-guide-link]').forEach((a) => a.setAttribute('href', 'cfop/'));
+  } catch (e) { /* ok */ }
+  cube = new Cube3D($('#tm-cube'), { size: 30, rx: -24, ry: -38 });
   $$('[data-current-year]').forEach((el) => { el.textContent = String(new Date().getFullYear()); });
   setScramble(Cube.scramble());
   applyLanguage(lang, false);

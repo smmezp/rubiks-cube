@@ -1,6 +1,10 @@
 # Cubo Mágico · Rubik's Cube
 
-**Site:** https://smmezp.github.io/rubiks-cube/ · **Timer:** https://smmezp.github.io/rubiks-cube/timer.html
+| Página | Endereço |
+|---|---|
+| Método básico | https://smmezp.github.io/rubiks-cube/ |
+| CFOP (avançado) | https://smmezp.github.io/rubiks-cube/cfop/ |
+| Timer | https://smmezp.github.io/rubiks-cube/timer/ |
 
 Site para aprender a resolver o cubo mágico, com dois modos selecionáveis no topo:
 
@@ -23,8 +27,9 @@ Abra <http://localhost:5173>.
 
 ## Publicar no GitHub Pages
 
-Antes de cada `git push`, rode `npm run bump` para atualizar a versão dos arquivos
-(assim ninguém fica com CSS/JS antigos em cache).
+Antes de cada `git push`, rode **`npm run build`**. Ele:
+- atualiza a versão dos arquivos CSS/JS (ninguém fica com arquivos velhos em cache);
+- gera `cfop/index.html` a partir do `index.html` (é o endereço `/cfop/`). **Edite sempre o `index.html`.**
 
 O site é 100% estático (HTML + CSS + JS). Basta enviar a pasta para um repositório e ativar
 **Settings → Pages → Deploy from a branch → `main` / root**. O `server.js` só é usado localmente.
@@ -32,8 +37,11 @@ O site é 100% estático (HTML + CSS + JS). Basta enviar a pasta para um reposit
 ## Estrutura
 
 ```
-index.html        guia (modo básico e avançado)
-timer.html        timer de speedcubing (página separada)
+index.html        guia (modo básico e avançado) → /
+cfop/index.html   GERADO pelo build (mesma página, abre no CFOP) → /cfop/
+timer/index.html  timer de speedcubing → /timer/
+timer.html        redireciona o endereço antigo para /timer/
+build.js          prepara para publicar (npm run build)
 css/style.css     estilos e temas
 css/library.css   biblioteca: algoritmos aprendidos
 css/timer.css     página do timer
