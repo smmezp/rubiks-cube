@@ -182,7 +182,9 @@
     sizeFor() {
       const w = this.el.parentElement.clientWidth || 320;
       // limita também pela altura (celular deitado)
-      return Math.round(Math.max(36, Math.min(78, w / 5.4, window.innerHeight / 7.5)));
+      // no celular o cubo fica menor, para não invadir o "arraste para girar" e o título
+      const div = window.innerWidth <= 560 ? 7 : 5.4;
+      return Math.round(Math.max(36, Math.min(78, w / div, window.innerHeight / 7.5)));
     }
     resize() {
       const s = this.sizeFor();

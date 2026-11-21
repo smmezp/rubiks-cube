@@ -143,3 +143,8 @@ h1, h2, h3, .lead, .prose p { overflow-wrap: break-word; }
   .tm-cube-card { padding: 6px 10px; }
   .tm-time { font-size: clamp(3.2rem, 17vh, 6rem); }
 }
+
+/* celular: o "arraste para girar" fica um pouco mais longe do cubo, que gira e desce alguns pixels */
+@media (max-width: 560px) {
+  .hero-cube .hint { margin-top: 26px; }
+}
