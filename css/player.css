@@ -2,7 +2,7 @@
    Player: rótulos "Solução" / "Setup" e a área de setup
    ========================================================= */
 .player-label {
-  font: 700 .7rem/1 "Inter", sans-serif;
+  font: 700 .7rem/1 "Instrument Sans", sans-serif;
   letter-spacing: .12em;
   text-transform: uppercase;
   color: var(--muted);
@@ -23,7 +23,7 @@
 .setup-head .player-label { margin: 0; }
 .setup-actions { display: flex; gap: 6px; }
 .setup-btn {
-  font: 600 .8rem/1 "Inter", sans-serif;
+  font: 600 .8rem/1 "Instrument Sans", sans-serif;
   color: var(--ink);
   background: var(--surface);
   border: 1px solid var(--line);

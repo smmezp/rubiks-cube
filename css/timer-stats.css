@@ -15,7 +15,7 @@
 .tm-pb {
   position: absolute; top: 18px; left: 50%; transform: translateX(-50%);
   padding: 7px 14px; border-radius: 999px;
-  font: 700 .86rem/1 "Inter", sans-serif; letter-spacing: .02em;
+  font: 700 .86rem/1 "Instrument Sans", sans-serif; letter-spacing: .02em;
   color: #fff; background: #00a650;
   animation: pbIn .5s var(--ease-spring) both;
 }
@@ -35,8 +35,8 @@ body.is-timing .tm-keys { opacity: 0; }
 /* ---------- tabela de estatísticas (atual × melhor) ---------- */
 .tm-stats-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
 .tm-stats-table th, .tm-stats-table td { padding: 8px 6px; text-align: right; border-bottom: 1px solid var(--line); }
-.tm-stats-table thead th { font: 700 .72rem/1 "Inter", sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
-.tm-stats-table tbody th { text-align: left; font: 600 .86rem "Inter", sans-serif; color: var(--ink-2); }
+.tm-stats-table thead th { font: 700 .72rem/1 "Instrument Sans", sans-serif; letter-spacing: .1em; text-transform: uppercase; color: var(--muted); }
+.tm-stats-table tbody th { text-align: left; font: 600 .86rem "Instrument Sans", sans-serif; color: var(--ink-2); }
 .tm-stats-table td { font: 700 1rem "JetBrains Mono", monospace; color: var(--ink); }
 .tm-stats-table td:last-child { color: #00a650; }
 .tm-stats-table tbody tr:last-child th, .tm-stats-table tbody tr:last-child td { border-bottom: 0; }
@@ -47,7 +47,7 @@ body.is-timing .tm-keys { opacity: 0; }
 .tm-session { display: flex; gap: 6px; margin-bottom: 12px; }
 .tm-select {
   flex: 1; min-width: 0; height: 36px; padding: 0 30px 0 12px; border-radius: 10px;
-  font: 600 .86rem "Inter", sans-serif; color: var(--ink);
+  font: 600 .86rem "Instrument Sans", sans-serif; color: var(--ink);
   background: var(--surface-2) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5' fill='none' stroke='%23888' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 8px center / 18px;
   border: 1px solid var(--line); appearance: none; -webkit-appearance: none; cursor: pointer;
 }
@@ -98,7 +98,7 @@ body.is-timing .tm-keys { opacity: 0; }
   background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow);
   font: 600 .8rem "JetBrains Mono", monospace; color: var(--ink); white-space: nowrap;
 }
-.tm-tip b { font-family: "Inter", sans-serif; color: var(--muted); font-size: .74rem; }
+.tm-tip b { font-family: "Instrument Sans", sans-serif; color: var(--muted); font-size: .74rem; }
 .tm-tip span { display: flex; align-items: center; gap: 6px; }
 
 /* ---------- detalhes de um tempo ---------- */
@@ -116,8 +116,8 @@ body.is-timing .tm-keys { opacity: 0; }
 .tm-detail-time small { font-size: .9rem; color: var(--accent-text); }
 .tm-detail-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 0; }
 .tm-detail-meta div { background: var(--surface-2); border-radius: 12px; padding: 10px 12px; }
-.tm-detail-meta dt { font: 600 .72rem/1 "Inter", sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
-.tm-detail-meta dd { margin: 6px 0 0; font: 600 .92rem "Inter", sans-serif; }
+.tm-detail-meta dt { font: 600 .72rem/1 "Instrument Sans", sans-serif; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.tm-detail-meta dd { margin: 6px 0 0; font: 600 .92rem "Instrument Sans", sans-serif; }
 .tm-detail-scr { font: 700 1rem/1.6 "JetBrains Mono", monospace; word-spacing: .15em; background: var(--surface-2); border-radius: 12px; padding: 10px 12px; margin-top: -4px; }
 .tm-dialog-actions { display: flex; flex-wrap: wrap; gap: 8px; }
 .tm-dialog-actions .tm-pen { min-width: 48px; }

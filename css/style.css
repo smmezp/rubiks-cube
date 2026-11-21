@@ -66,14 +66,14 @@ body {
   margin: 0;
   background: var(--bg);
   color: var(--ink);
-  font: 400 16px/1.6 "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  font: 400 16px/1.6 "Instrument Sans", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   -webkit-font-smoothing: antialiased;
   transition: background-color .45s ease, color .45s ease;
 }
 body.no-scroll { overflow: hidden; }
 
 h1, h2, h3 {
-  font-family: "Bricolage Grotesque", "Inter", system-ui, sans-serif;
+  font-family: "Bricolage Grotesque", "Instrument Sans", system-ui, sans-serif;
   line-height: 1.08;
   letter-spacing: -.02em;
   margin: 0;
@@ -96,7 +96,7 @@ strong { font-weight: 700; color: var(--ink); }
 [hidden] { display: none !important; }
 
 .eyebrow {
-  font: 700 .75rem/1 "Inter", sans-serif;
+  font: 700 .75rem/1 "Instrument Sans", sans-serif;
   letter-spacing: .14em;
   text-transform: uppercase;
   color: var(--accent-text);
@@ -140,7 +140,7 @@ strong { font-weight: 700; color: var(--ink); }
   display: flex;
   flex-direction: column;
 }
-.brand-text small { font: 500 .72rem/1.35 "Inter", sans-serif; color: var(--muted); letter-spacing: .02em; }
+.brand-text small { font: 500 .72rem/1.35 "Instrument Sans", sans-serif; color: var(--muted); letter-spacing: .02em; }
 
 /* --- seletor Básico / Avançado --- */
 .mode-switch {
@@ -185,7 +185,7 @@ strong { font-weight: 700; color: var(--ink); }
 .mode-switch button[aria-selected="true"] { color: #1f130d; }
 [data-mode="advanced"] .mode-switch button[aria-selected="true"] { color: #fff; }
 .ms-title { font: 700 .86rem/1.1 "Bricolage Grotesque", sans-serif; }
-.ms-sub { font: 600 .69rem/1.25 "Inter", sans-serif; letter-spacing: .1em; text-transform: uppercase; opacity: .85; }
+.ms-sub { font: 600 .69rem/1.25 "Instrument Sans", sans-serif; letter-spacing: .1em; text-transform: uppercase; opacity: .85; }
 
 .topnav { justify-self: end; }
 .topnav div { display: flex; gap: 4px; }
@@ -242,7 +242,7 @@ main { overflow-x: clip; }
   gap: 8px;
   border-radius: 999px;
   padding: 13px 22px;
-  font: 700 .97rem/1 "Inter", sans-serif;
+  font: 700 .97rem/1 "Instrument Sans", sans-serif;
   text-decoration: none;
   cursor: pointer;
   border: 1px solid transparent;
@@ -454,7 +454,7 @@ main { overflow-x: clip; }
 .case-body { display: flex; flex-direction: column; gap: 6px; min-width: 0; padding-right: 22px; }
 .case-title { font: 700 1rem/1.2 "Bricolage Grotesque", sans-serif; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
 .case-title em {
-  font: 600 .66rem/1 "Inter", sans-serif;
+  font: 600 .66rem/1 "Instrument Sans", sans-serif;
   font-style: normal;
   letter-spacing: .06em;
   text-transform: uppercase;
@@ -551,7 +551,7 @@ main { overflow-x: clip; }
   pointer-events: none;
 }
 .stage h3 { display: flex; flex-direction: column; gap: 4px; }
-.stage h3 small { font: 600 .74rem/1.2 "Inter", sans-serif; text-transform: uppercase; letter-spacing: .1em; color: var(--accent-text); }
+.stage h3 small { font: 600 .74rem/1.2 "Instrument Sans", sans-serif; text-transform: uppercase; letter-spacing: .1em; color: var(--accent-text); }
 .stage p { margin-top: 12px; color: var(--ink-2); font-size: .94rem; }
 .stage .stage-meta { margin-top: 16px; font: 600 .78rem/1 "JetBrains Mono", monospace; color: var(--muted); }
 
@@ -589,7 +589,7 @@ main { overflow-x: clip; }
   border: 0;
   background: none;
   color: var(--ink-2);
-  font: 700 .92rem/1 "Inter", sans-serif;
+  font: 700 .92rem/1 "Instrument Sans", sans-serif;
   padding: 10px 16px;
   border-radius: 999px;
   cursor: pointer;
@@ -615,7 +615,7 @@ main { overflow-x: clip; }
   border: 0;
   background: none;
   color: var(--ink);
-  font: 500 .94rem "Inter", sans-serif;
+  font: 500 .94rem "Instrument Sans", sans-serif;
   padding: 12px 0;
   width: 100%;
   outline: none;
@@ -863,7 +863,7 @@ html[data-nav='lang']::view-transition-new(root) { animation: vtFadeUp .4s var(-
 .timer-link {
   display: inline-flex; align-items: center; gap: 6px; height: 38px; padding: 0 12px;
   border-radius: 12px; border: 1.5px solid var(--line); background: var(--surface);
-  color: var(--ink); text-decoration: none; font: 700 .85rem/1 "Inter", sans-serif;
+  color: var(--ink); text-decoration: none; font: 700 .85rem/1 "Instrument Sans", sans-serif;
   transition: border-color .2s ease, background-color .45s ease, transform .15s ease;
 }
 .timer-link svg { width: 18px; height: 18px; color: var(--accent-text); }
