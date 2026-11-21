@@ -1,0 +1,338 @@
+<!doctype html>
+<html lang="en" data-mode="basic">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Rubik's Cube — Learn to solve it</title>
+  <meta name="description" content="Learn to solve the Rubik's Cube: beginner layer-by-layer method and the complete CFOP (Fridrich) method with F2L, OLL and PLL." />
+  <meta name="author" content="Medeiros" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Rubik's Cube — Learn to solve it" />
+  <meta property="og:description" content="Beginner layer-by-layer method and the full CFOP: 119 algorithms with a 3D cube, plus a speedcubing timer." />
+  <meta property="og:image" content="https://smmezp.github.io/rubiks-cube/assets/og.png" />
+  <meta property="og:url" content="https://smmezp.github.io/rubiks-cube/" />
+  <meta property="og:locale" content="en_US" />
+  <meta property="og:locale:alternate" content="pt_BR" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#ff4d00" />
+  <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+  <script>
+    /* idioma e modo certos ANTES da primeira pintura (sem piscar no Básico) */
+    (function () {
+      var root = document.documentElement;
+      root.classList.add('is-loading'); // sem transições até a página montar
+      try {
+        root.lang = localStorage.getItem('medeiros-lang') === 'pt' ? 'pt-BR' : 'en';
+        var mode = localStorage.getItem('cubo-mode') === 'advanced' ? 'advanced' : 'basic';
+        if (location.hash === '#avancado') mode = 'advanced';
+        if (location.hash === '#basico') mode = 'basic';
+        root.dataset.mode = mode;
+      } catch (e) { /* sem storage */ }
+    })();
+  </script>
+  <!-- segura a 1ª pintura até o conteúdo e os scripts terminarem (evita flash) -->
+  <link rel="expect" href="#render-ready" blocking="render" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/library.css" />
+  <link rel="stylesheet" href="css/polish.css" />
+  <link rel="stylesheet" href="css/responsive.css" />
+</head>
+<body>
+  <!-- ================= HEADER + SELETOR DE MÉTODO + IDIOMA ================= -->
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a class="brand" href="#topo">
+        <svg class="brand-mark" viewBox="0 0 32 32" aria-hidden="true">
+          <rect x="1" y="1" width="30" height="30" rx="7" fill="currentColor"/>
+          <g fill="#fff">
+            <rect x="5" y="5" width="6.5" height="6.5" rx="1.6"/><rect x="12.75" y="5" width="6.5" height="6.5" rx="1.6" opacity=".85"/><rect x="20.5" y="5" width="6.5" height="6.5" rx="1.6"/>
+            <rect x="5" y="12.75" width="6.5" height="6.5" rx="1.6" opacity=".85"/><rect x="12.75" y="12.75" width="6.5" height="6.5" rx="1.6"/><rect x="20.5" y="12.75" width="6.5" height="6.5" rx="1.6" opacity=".85"/>
+            <rect x="5" y="20.5" width="6.5" height="6.5" rx="1.6"/><rect x="12.75" y="20.5" width="6.5" height="6.5" rx="1.6" opacity=".85"/><rect x="20.5" y="20.5" width="6.5" height="6.5" rx="1.6"/>
+          </g>
+        </svg>
+        <span class="brand-text"><span data-i18n="brand.name">Rubik's Cube</span><small data-i18n="brand.sub">Cubo Mágico</small></span>
+      </a>
+
+      <div class="mode-switch" role="tablist" data-i18n-aria="mode.label" aria-label="Choose the method">
+        <span class="mode-thumb" aria-hidden="true"></span>
+        <button role="tab" id="tab-basic" data-mode="basic" aria-selected="true">
+          <span class="ms-title" data-i18n="mode.basic">Basic</span><span class="ms-sub" data-i18n="mode.basicSub">Layers</span>
+        </button>
+        <button role="tab" id="tab-advanced" data-mode="advanced" aria-selected="false">
+          <span class="ms-title" data-i18n="mode.adv">Advanced</span><span class="ms-sub" data-i18n="mode.advSub">CFOP</span>
+        </button>
+      </div>
+
+      <div class="topbar-end">
+        <nav class="topnav" data-i18n-aria="nav.sections" aria-label="Sections">
+          <div class="nav-basic">
+            <a href="#pecas" data-i18n="nav.pieces">Pieces</a><a href="#notacao" data-i18n="nav.notation">Notation</a><a href="#passos" data-i18n="nav.steps">7 steps</a>
+          </div>
+          <div class="nav-advanced">
+            <a href="#cfop" data-i18n="nav.what">What is it</a><a href="#etapas" data-i18n="nav.stages">Stages</a><a href="#biblioteca" data-i18n="nav.algs">Algorithms</a>
+          </div>
+        </nav>
+        <a class="timer-link" href="timer.html" data-i18n-title="nav.timerTitle" title="Speedcubing timer"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="13.5" r="7.5" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12 9.5v4l2.5 2M9.5 3h5M19 6.5l-1.5 1.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span data-i18n="nav.timer">Timer</span></a>
+        <!-- seletor de idioma (mesmo do portfolio) -->
+        <div class="lang-switch" data-lang-active="en" role="group" data-i18n-aria="lang.label" aria-label="Language">
+          <span class="lang-thumb" aria-hidden="true"></span>
+          <button type="button" data-lang="en" class="is-active" aria-pressed="true" aria-label="English" title="English"><img class="flag" src="assets/flags/us.svg" alt="" width="22" height="22" decoding="async"></button>
+          <button type="button" data-lang="pt" aria-pressed="false" aria-label="Português" title="Português"><img class="flag" src="assets/flags/br.svg" alt="" width="22" height="22" decoding="async"></button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="topo">
+    <!-- ======================= MÉTODO BÁSICO ======================= -->
+    <section class="mode-pane" id="pane-basic" data-pane="basic">
+      <div class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow" data-i18n="b.eyebrow">Layer-by-layer method · for beginners</p>
+          <h1 data-i18n="b.h1">Solve the Rubik’s Cube in <em>7 steps</em>.</h1>
+          <p class="lead" data-i18n="b.lead"></p>
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="#passos" data-i18n="b.cta1">Start with step 1</a>
+            <a class="btn btn-ghost" href="#notacao" data-i18n="b.cta2">Learn the notation</a>
+          </div>
+          <dl class="stats">
+            <div><dt>7</dt><dd data-i18n="b.stat1">steps</dd></div>
+            <div><dt>~10</dt><dd data-i18n="b.stat2">algorithms</dd></div>
+            <div><dt data-i18n="b.stat3v">43 quint.</dt><dd data-i18n="b.stat3">possible combinations</dd></div>
+          </dl>
+        </div>
+        <div class="hero-cube">
+          <div class="hero-glow" aria-hidden="true"></div>
+          <div id="hero-basic" class="hero-cube-el" data-i18n-aria="hero.aria"></div>
+          <p class="hint" data-i18n="hint.drag">Drag to rotate ↻</p>
+        </div>
+      </div>
+
+      <section class="block" id="pecas">
+        <header class="block-head">
+          <p class="eyebrow" data-i18n="p.eyebrow"></p>
+          <h2 data-i18n="p.h2"></h2>
+          <p data-i18n="p.p"></p>
+        </header>
+        <div class="piece-grid">
+          <article class="piece-card">
+            <div class="piece-fig" data-fig="center"></div>
+            <h3 data-i18n="p.center"></h3>
+            <p data-i18n="p.centerP"></p>
+          </article>
+          <article class="piece-card">
+            <div class="piece-fig" data-fig="edge"></div>
+            <h3 data-i18n="p.edge"></h3>
+            <p data-i18n="p.edgeP"></p>
+          </article>
+          <article class="piece-card">
+            <div class="piece-fig" data-fig="corner"></div>
+            <h3 data-i18n="p.corner"></h3>
+            <p data-i18n="p.cornerP"></p>
+          </article>
+        </div>
+        <p class="fact" data-i18n="p.fact"></p>
+      </section>
+
+      <section class="block" id="notacao">
+        <header class="block-head">
+          <p class="eyebrow" data-i18n="n.eyebrow"></p>
+          <h2 data-i18n="n.h2"></h2>
+          <p data-i18n="n.p"></p>
+        </header>
+        <div class="notation-legend">
+          <span data-i18n="n.F"></span><span data-i18n="n.B"></span><span data-i18n="n.R"></span><span data-i18n="n.L"></span><span data-i18n="n.U"></span><span data-i18n="n.D"></span><span data-i18n="n.M"></span>
+        </div>
+        <div class="notation-grid" id="notation-grid"></div>
+      </section>
+
+      <section class="block" id="passos">
+        <header class="block-head">
+          <p class="eyebrow" data-i18n="s.eyebrow"></p>
+          <h2 data-i18n="s.h2"></h2>
+          <p data-i18n="s.p"></p>
+        </header>
+        <ol class="steps" id="steps"></ol>
+      </section>
+
+      <section class="next-level">
+        <div>
+          <p class="eyebrow" data-i18n="nx.eyebrow"></p>
+          <h2 data-i18n="nx.h2"></h2>
+          <p data-i18n="nx.p"></p>
+        </div>
+        <button class="btn btn-light" data-go="advanced" data-i18n="nx.btn"></button>
+      </section>
+    </section>
+
+    <!-- ======================= MÉTODO AVANÇADO ======================= -->
+    <section class="mode-pane" id="pane-advanced" data-pane="advanced">
+      <div class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow" data-i18n="a.eyebrow"></p>
+          <h1 data-i18n="a.h1"></h1>
+          <p class="lead" data-i18n="a.lead"></p>
+          <div class="hero-cta">
+            <a class="btn btn-primary" href="#biblioteca" data-i18n="a.cta1"></a>
+            <a class="btn btn-ghost" href="#cfop" data-i18n="a.cta2"></a>
+          </div>
+          <dl class="stats">
+            <div><dt>4</dt><dd data-i18n="a.stat1"></dd></div>
+            <div><dt>119</dt><dd data-i18n="a.stat2"></dd></div>
+            <div><dt>~55</dt><dd data-i18n="a.stat3"></dd></div>
+          </dl>
+        </div>
+        <div class="hero-cube">
+          <div class="hero-glow" aria-hidden="true"></div>
+          <div id="hero-advanced" class="hero-cube-el" data-i18n-aria="hero.aria"></div>
+          <p class="hint" data-i18n="hint.drag"></p>
+        </div>
+      </div>
+
+      <section class="block" id="cfop">
+        <header class="block-head">
+          <p class="eyebrow" data-i18n="c.eyebrow"></p>
+          <h2 data-i18n="c.h2"></h2>
+        </header>
+        <div class="prose-grid">
+          <div class="prose">
+            <p data-i18n="c.p1"></p>
+            <p data-i18n="c.p2"></p>
+            <p data-i18n="c.p3"></p>
+          </div>
+          <aside class="compare">
+            <h3 data-i18n="c.cmp"></h3>
+            <table>
+              <thead><tr><th></th><th data-i18n="c.th1"></th><th data-i18n="c.th2"></th></tr></thead>
+              <tbody>
+                <tr><td data-i18n="c.r1"></td><td>7</td><td>4</td></tr>
+                <tr><td data-i18n="c.r2"></td><td>~10</td><td data-i18n="c.r2b"></td></tr>
+                <tr><td data-i18n="c.r3"></td><td>~100–120</td><td>~55–60</td></tr>
+                <tr><td data-i18n="c.r4"></td><td data-i18n="c.r4a"></td><td data-i18n="c.r4b"></td></tr>
+              </tbody>
+            </table>
+          </aside>
+        </div>
+      </section>
+
+      <section class="block" id="etapas">
+        <header class="block-head">
+          <p class="eyebrow" data-i18n="e.eyebrow"></p>
+          <h2 data-i18n="e.h2"></h2>
+        </header>
+        <div class="stage-grid">
+          <article class="stage">
+            <span class="stage-letter">C</span>
+            <h3 data-i18n="e.c"></h3>
+            <p data-i18n="e.cP"></p>
+            <p class="stage-meta" data-i18n="e.cM"></p>
+          </article>
+          <article class="stage">
+            <span class="stage-letter">F</span>
+            <h3 data-i18n="e.f"></h3>
+            <p data-i18n="e.fP"></p>
+            <p class="stage-meta" data-i18n="e.fM"></p>
+          </article>
+          <article class="stage">
+            <span class="stage-letter">O</span>
+            <h3 data-i18n="e.o"></h3>
+            <p data-i18n="e.oP"></p>
+            <p class="stage-meta" data-i18n="e.oM"></p>
+          </article>
+          <article class="stage">
+            <span class="stage-letter">P</span>
+            <h3 data-i18n="e.p"></h3>
+            <p data-i18n="e.pP"></p>
+            <p class="stage-meta" data-i18n="e.pM"></p>
+          </article>
+        </div>
+
+        <div class="path">
+          <h3 data-i18n="e.path"></h3>
+          <ol>
+            <li data-i18n="e.l1"></li>
+            <li data-i18n="e.l2"></li>
+            <li data-i18n="e.l3"></li>
+            <li data-i18n="e.l4"></li>
+            <li data-i18n="e.l5"></li>
+          </ol>
+        </div>
+
+        <div class="adv-notation">
+          <h3 data-i18n="e.not"></h3>
+          <div class="notation-grid small" id="adv-notation-grid"></div>
+          <p class="note" data-i18n="e.notP"></p>
+        </div>
+      </section>
+
+      <section class="block" id="biblioteca">
+        <header class="block-head">
+          <p class="eyebrow" data-i18n="l.eyebrow"></p>
+          <h2 data-i18n="l.h2"></h2>
+          <p data-i18n="l.p"></p>
+        </header>
+        <div class="lib-toolbar">
+          <div class="lib-tabs" role="tablist" data-i18n-aria="l.stage" aria-label="Stage">
+            <button role="tab" data-lib="cross" data-i18n="l.cross">Cross</button>
+            <button role="tab" data-lib="f2l" aria-selected="true">F2L <span>41</span></button>
+            <button role="tab" data-lib="oll">OLL <span>57</span></button>
+            <button role="tab" data-lib="pll">PLL <span>21</span></button>
+          </div>
+          <label class="lib-search">
+            <span class="sr-only" data-i18n="l.search">Search</span>
+            <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7" fill="none" stroke="currentColor" stroke-width="2"/><path d="M20 20l-3.5-3.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            <input type="search" id="lib-search" data-i18n-ph="l.ph" placeholder="Search number, name or move (e.g. 12, T, Rw)" autocomplete="off" />
+          </label>
+        </div>
+        <p class="lib-desc" id="lib-desc"></p>
+        <div class="lib-progress" id="lib-progress" hidden></div>
+        <div class="lib-grid" id="lib-grid"></div>
+      </section>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      <p data-i18n="f.tagline"></p>
+      <p class="credits" data-i18n="f.credits"></p>
+      <p class="copyright">© <span data-current-year>2026</span> <a href="https://smmezp.github.io/portfolio/" target="_blank" rel="noopener">Medeiros</a>. <span data-i18n="f.rights">All rights reserved.</span></p>
+    </div>
+  </footer>
+
+  <!-- ======================= PLAYER ======================= -->
+  <div class="player-backdrop" id="player" hidden>
+    <div class="player" role="dialog" aria-modal="true" aria-labelledby="player-title">
+      <button class="player-close" id="player-close" data-i18n-aria="pl.close" aria-label="Close">×</button>
+      <div class="player-stage">
+        <div id="player-cube"></div>
+        <p class="hint" data-i18n="pl.hint"></p>
+      </div>
+      <div class="player-side">
+        <p class="eyebrow" id="player-kicker"></p>
+        <h3 id="player-title"></h3>
+        <div class="player-moves" id="player-moves"></div>
+        <div class="player-controls">
+          <button id="pl-reset" data-i18n-aria="pl.reset" data-i18n-title="pl.reset">⏮</button>
+          <button id="pl-prev" data-i18n-aria="pl.prev" data-i18n-title="pl.prev">◀</button>
+          <button id="pl-play" class="primary" data-i18n-aria="pl.play">▶</button>
+          <button id="pl-next" data-i18n-aria="pl.next" data-i18n-title="pl.next">▶|</button>
+        </div>
+        <label class="speed"><span data-i18n="pl.speed">Speed</span>
+          <input type="range" id="pl-speed" min="120" max="900" step="20" value="420" />
+        </label>
+        <p class="player-note" id="player-note"></p>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/i18n.js"></script>
+  <script src="js/cube.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/cube3d.js"></script>
+  <script src="js/app.js"></script>
+  <div id="render-ready" hidden></div>
+</body>
+</html>

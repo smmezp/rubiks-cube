@@ -1,0 +1,10 @@
+{
+  "name": "rubiks-cube",
+  "version": "1.0.0",
+  "description": "Rubik's Cube: beginner layer-by-layer method and CFOP, with an animated 3D cube (EN/PT).",
+  "author": "Medeiros",
+  "private": true,
+  "scripts": {
+    "start": "node server.js"
+  }
+}

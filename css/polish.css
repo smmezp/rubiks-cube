@@ -1,0 +1,148 @@
+/* =========================================================
+   Acabamento: transições de página, estados de botões,
+   indicador das abas, entrada dos cards, menu ativo,
+   botão "voltar ao topo" e fechamento do player.
+   Usado em index.html e timer.html.
+   ========================================================= */
+
+/* ---------- sem piscar ----------
+   • o fundo do <html> tem a cor do tema: nada branco aparece entre as páginas;
+   • o modo certo já vem do <head>, então o painel certo aparece direto;
+   • enquanto a página monta (.is-loading) nada faz transição de cor. */
+html { background: var(--bg); }
+html.is-loading *, html.is-loading *::before, html.is-loading *::after { transition: none !important; }
+[data-mode="basic"] #pane-advanced,
+[data-mode="advanced"] #pane-basic { display: none !important; }
+.mode-pane { animation: none; }
+
+/* ---------- troca de página (guia ⇄ timer) ----------
+   A página nova entra por cima da antiga (sem passar por uma tela vazia). */
+@view-transition { navigation: auto; }
+.topbar { view-transition-name: topbar; }
+::view-transition-group(topbar) { animation-duration: .3s; }
+::view-transition-old(root) { animation: vtHold .3s linear both; }
+::view-transition-new(root) { animation: vtPageIn .3s var(--ease-out) both; }
+@keyframes vtHold { to { opacity: 1; } }
+@keyframes vtPageIn { from { opacity: 0; transform: translateY(8px); } }
+
+/* ---------- Básico ⇄ Avançado: desliza na direção da troca ---------- */
+html[data-nav='forward']::view-transition-old(root) { animation: vtOutLeft .3s cubic-bezier(.4, 0, 1, 1) both; }
+html[data-nav='forward']::view-transition-new(root) { animation: vtInRight .45s var(--ease-out) both; }
+html[data-nav='back']::view-transition-old(root) { animation: vtOutRight .3s cubic-bezier(.4, 0, 1, 1) both; }
+html[data-nav='back']::view-transition-new(root) { animation: vtInLeft .45s var(--ease-out) both; }
+@keyframes vtOutLeft { to { opacity: 0; transform: translateX(-36px); } }
+@keyframes vtInRight { from { opacity: 0; transform: translateX(44px); } }
+@keyframes vtOutRight { to { opacity: 0; transform: translateX(36px); } }
+@keyframes vtInLeft { from { opacity: 0; transform: translateX(-44px); } }
+/* a cor do tema muda junto com o deslize, não depois dele */
+html[data-nav] *, html[data-nav] *::before, html[data-nav] *::after { transition: none !important; }
+
+/* ---------- botões: um único comportamento em todo o site ---------- */
+.btn, .chip-btn, .tm-btn, .timer-link, .back-link, .note-card, .case-card,
+.lib-tabs button, .lp-filter button, .tm-pen, .tl-actions button, .player-controls button,
+.mode-switch button, .learn-toggle, .to-top, .player-close {
+  -webkit-tap-highlight-color: transparent;
+}
+.btn {
+  position: relative;
+  transition: transform .25s var(--ease-spring), box-shadow .25s ease, background-color .2s ease, border-color .2s ease, color .2s ease;
+}
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: translateY(0) scale(.97); transition-duration: .08s; }
+.btn-primary { box-shadow: 0 10px 22px -12px rgba(0, 0, 0, .45); }
+.btn-primary:hover { box-shadow: 0 16px 28px -14px rgba(0, 0, 0, .5); filter: saturate(1.08); }
+.btn-ghost:hover { background: var(--surface-2); }
+/* setinha que anda no hover dos botões de ação */
+.btn-primary::after, .btn-light::after {
+  content: "→"; display: inline-block; margin-left: 2px;
+  transition: transform .3s var(--ease-spring);
+}
+.btn-light::after { content: none; }
+.btn-primary:hover::after { transform: translateX(4px); }
+
+.chip-btn:active, .tm-btn:active:not(:disabled), .timer-link:active, .back-link:active,
+.lp-filter button:active, .tm-pen:active, .tl-actions button:active, .learn-toggle:active {
+  transform: scale(.95);
+  transition-duration: .08s;
+}
+.note-card, .case-card { transition: transform .25s var(--ease-spring), border-color .2s ease, box-shadow .25s ease; }
+.note-card:active, .case-card:active { transform: translateY(0) scale(.985); transition-duration: .08s; }
+.mode-switch button:active .ms-title, .lib-tabs button:active { transform: scale(.96); }
+.mode-switch button .ms-title { display: inline-block; transition: transform .2s var(--ease-spring); }
+
+/* foco de teclado sempre visível e com a cor do tema */
+.btn:focus-visible, .chip-btn:focus-visible, .tm-btn:focus-visible, .timer-link:focus-visible,
+.back-link:focus-visible, .note-card:focus-visible, .case-card:focus-visible, .lib-tabs button:focus-visible,
+.lp-filter button:focus-visible, .mode-switch button:focus-visible, .lang-switch button:focus-visible,
+.learn-toggle:focus-visible, .tm-pen:focus-visible, .to-top:focus-visible, .player-controls button:focus-visible {
+  outline: 3px solid var(--accent);
+  outline-offset: 3px;
+}
+
+/* botão do player: o play pulsa de leve enquanto toca */
+.player-controls .primary { transition: transform .2s var(--ease-spring), filter .2s ease; }
+.player-controls .primary:hover { filter: brightness(1.06); }
+.player-controls button:active { transform: scale(.94); transition-duration: .08s; }
+
+/* ---------- abas da biblioteca: indicador deslizante ---------- */
+.lib-tabs { position: relative; isolation: isolate; }
+.lib-tabs button { position: relative; z-index: 1; transition: color .25s ease, transform .2s var(--ease-spring); }
+.lib-thumb {
+  position: absolute; z-index: 0; top: 5px; bottom: 5px; left: 5px; width: 0;
+  border-radius: 999px; background: var(--accent);
+  box-shadow: 0 6px 14px -8px rgba(0, 0, 0, .5);
+  transition: transform .45s var(--ease-spring), width .35s var(--ease-out);
+}
+.lib-tabs:not(.has-thumb) .lib-thumb { transition: none; }
+.lib-tabs.has-thumb button[aria-selected="true"] { background: transparent; }
+.lib-tabs button[aria-selected="true"] { color: var(--accent-ink); }
+
+/* ---------- cards entram em cascata ao trocar de aba / filtro ---------- */
+.lib-grid.is-entering > * {
+  animation: cardIn .45s var(--ease-out) both;
+  animation-delay: calc(var(--i, 0) * 28ms);
+}
+@keyframes cardIn { from { opacity: 0; transform: translateY(12px) scale(.98); } }
+
+/* ---------- menu do topo: seção atual ---------- */
+.topnav a { position: relative; }
+.topnav a.is-active { color: var(--accent-text); background: var(--accent-soft); }
+
+/* ---------- voltar ao topo ---------- */
+.to-top {
+  position: fixed; right: 20px; bottom: 20px; z-index: 30;
+  width: 46px; height: 46px; border-radius: 14px; display: grid; place-items: center; cursor: pointer;
+  color: var(--ink); background: color-mix(in srgb, var(--surface) 82%, transparent);
+  border: 1px solid var(--line); box-shadow: var(--shadow);
+  backdrop-filter: blur(14px) saturate(160%); -webkit-backdrop-filter: blur(14px) saturate(160%);
+  opacity: 0; transform: translateY(14px) scale(.9); pointer-events: none;
+  transition: opacity .25s ease, transform .35s var(--ease-spring), border-color .2s ease;
+}
+.to-top svg { width: 20px; height: 20px; }
+.to-top.is-shown { opacity: 1; transform: none; pointer-events: auto; }
+.to-top:hover { border-color: var(--accent); transform: translateY(-2px); }
+.to-top:active { transform: scale(.93); transition-duration: .08s; }
+body.no-scroll .to-top { opacity: 0; pointer-events: none; }
+
+/* ---------- player: sai animado ---------- */
+.player-backdrop.is-closing { animation: fadeOut .2s ease forwards; }
+.player-backdrop.is-closing .player { animation: popOut .2s cubic-bezier(.4, 0, 1, 1) forwards; }
+@keyframes fadeOut { to { opacity: 0; } }
+@keyframes popOut { to { opacity: 0; transform: scale(.96) translateY(6px); } }
+.player-close { transition: transform .25s var(--ease-spring), border-color .2s ease, background-color .2s ease; }
+.player-close:hover { transform: rotate(90deg); border-color: var(--accent); }
+
+/* ---------- links do menu e rodapé ---------- */
+.topnav a, .copyright a, .credits a { transition: color .2s ease, background-color .2s ease; }
+.credits a { text-underline-offset: 3px; text-decoration-thickness: 1px; }
+.credits a:hover { color: var(--ink); }
+
+@media (max-width: 720px) {
+  .to-top { right: 14px; bottom: 14px; width: 42px; height: 42px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @view-transition { navigation: none; }
+  .btn, .note-card, .case-card, .lib-thumb, .to-top, .player-close, .btn-primary::after { transition: none !important; }
+  .lib-grid.is-entering > *, .player-backdrop.is-closing, .player-backdrop.is-closing .player { animation: none !important; }
+}
