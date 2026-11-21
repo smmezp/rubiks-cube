@@ -1,5 +1,6 @@
 # Cubo Mágico · Rubik's Cube
-n**Site:** https://smmezp.github.io/rubiks-cube/ · **Timer:** https://smmezp.github.io/rubiks-cube/timer.html
+
+**Site:** https://smmezp.github.io/rubiks-cube/ · **Timer:** https://smmezp.github.io/rubiks-cube/timer.html
 
 Site para aprender a resolver o cubo mágico, com dois modos selecionáveis no topo:
 
