@@ -130,7 +130,6 @@
     $('meta[name="theme-color"]').setAttribute('content', THEME[m]);
     try { localStorage.setItem('cubo-mode', m); } catch (e) { /* sem storage */ }
     if (!opts.silent) {
-      history.replaceState(null, '', m === 'advanced' ? '#avancado' : '#basico');
       window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
     }
     heroes.forEach((h) => h.sync());
@@ -142,7 +141,7 @@
     const root = document.documentElement;
     const apply = () => {
       setMode(m, { silent: true });
-      history.replaceState(null, '', m === 'advanced' ? '#avancado' : '#basico');
+      cleanUrl();
       window.scrollTo(0, 0);
       heroes.forEach((h) => h.resize());
     };
@@ -590,9 +589,16 @@
 
     let initial = 'basic';
     try { initial = localStorage.getItem('cubo-mode') || 'basic'; } catch (e) { /* ok */ }
+    // links antigos com #avancado / #basico ainda funcionam, mas a URL fica limpa
     if (location.hash === '#avancado') initial = 'advanced';
     if (location.hash === '#basico') initial = 'basic';
     setMode(initial === 'advanced' ? 'advanced' : 'basic', { silent: true });
+    const startHash = location.hash.slice(1);
+    cleanUrl();
+    if (startHash && startHash !== 'avancado' && startHash !== 'basico') {
+      requestAnimationFrame(() => document.getElementById(startHash)?.scrollIntoView());
+    }
+    setupAnchors();
     // vidro líquido só quando a barra da biblioteca está "grudada" no topo
     const toolbar = $('.lib-toolbar');
     const checkStuck = () => {
@@ -608,6 +614,25 @@
     window.addEventListener('hashchange', () => {
       if (location.hash === '#avancado' && mode !== 'advanced') setMode('advanced', { silent: true });
       if (location.hash === '#basico' && mode !== 'basic') setMode('basic', { silent: true });
+      cleanUrl();
+    });
+  }
+
+  /** Deixa a barra de endereço só com o caminho (…/rubiks-cube/), sem #. */
+  function cleanUrl() {
+    if (location.hash) history.replaceState(history.state, '', location.pathname + location.search);
+  }
+
+  /** Links internos (#passos, #biblioteca…) rolam até a seção sem mudar a URL. */
+  function setupAnchors() {
+    document.addEventListener('click', (e) => {
+      const a = e.target.closest('a[href^="#"]');
+      if (!a || e.defaultPrevented || e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey) return;
+      const id = a.getAttribute('href').slice(1);
+      e.preventDefault();
+      const target = id === 'topo' ? null : document.getElementById(id);
+      if (target) target.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'start' });
+      else window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
     });
   }
 
