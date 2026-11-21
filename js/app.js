@@ -163,6 +163,8 @@
     modeTarget = m;
     root.dataset.nav = m === 'advanced' ? 'forward' : 'back';
     const vt = modeVT = document.startViewTransition(apply);
+    // garantia: se o navegador não desenhar a transição logo (aba em segundo plano, aparelho lento), troca direto
+    setTimeout(() => { if (mode !== wantedMode) { vt.skipTransition(); apply(); } }, 350);
     vt.ready.catch(() => {});
     if (vt.updateCallbackDone) vt.updateCallbackDone.catch(() => {});
     vt.finished.catch(() => {}).finally(() => {
