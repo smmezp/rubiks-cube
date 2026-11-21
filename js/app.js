@@ -220,6 +220,13 @@
       $('#pl-next').addEventListener('click', () => { this.pause(); this.next(); });
       $('#pl-prev').addEventListener('click', () => { this.pause(); this.prev(); });
       $('#pl-reset').addEventListener('click', () => this.reset());
+      $('#pl-setup-play').addEventListener('click', () => this.playSetup());
+      $('#pl-setup-copy').addEventListener('click', async (e) => {
+        const b = e.currentTarget;
+        try { await navigator.clipboard.writeText(this.setupText); b.textContent = t('x.copied'); }
+        catch (err) { b.textContent = '✕'; }
+        setTimeout(() => { b.textContent = t('x.copy'); }, 1400);
+      });
       document.addEventListener('keydown', (e) => {
         if (!this.open) return;
         if (e.key === 'Escape') this.close();
@@ -229,7 +236,7 @@
       });
     },
     speed() { return +$('#pl-speed').value; },
-    show({ kicker, title, alg, state, note }) {
+    show({ kicker, title, alg, state, note, setup }) {
       this.start = Cube.clone(state);
       this.moves = Cube.parse(alg);
       this.idx = 0;
@@ -238,6 +245,12 @@
       $('#player-note').innerHTML = note || '';
       $('#player-moves').innerHTML = this.moves.map((m, i) => `<button class="mv" data-i="${i}">${m.text.replace(/'/g, '’')}</button>`).join('');
       $$('#player-moves .mv').forEach((b) => b.addEventListener('click', () => this.jump(+b.dataset.i + 1)));
+      // setup: como montar este caso a partir do cubo resolvido
+      this.setupText = setup ? simplifyAlg(setup) : '';
+      this.setupMoves = this.setupText ? Cube.parse(this.setupText) : [];
+      $('#player-setup').hidden = !this.setupMoves.length;
+      $('#player-setup-moves').innerHTML = this.setupMoves.map((m) => `<span class="mv">${Cube.moveToText(m).replace(/'/g, '’')}</span>`).join('');
+      $('#pl-setup-copy').textContent = t('x.copy');
       this.el.hidden = false;
       this.open = true;
       document.body.classList.add('no-scroll');
@@ -310,7 +323,45 @@
     pause() { this.playing = false; this.mark(); },
     toggle() { this.playing ? this.pause() : this.play(); },
     reset() { this.pause(); if (this.busy) return; this.cube.setState(this.start); this.idx = 0; this.mark(); },
+
+    /** Anima o setup: começa do cubo resolvido e chega no caso. Depois é só dar play na solução. */
+    async playSetup() {
+      if (!this.setupMoves.length) return;
+      this.pause();
+      while (this.busy) await new Promise((r) => setTimeout(r, 30));
+      this.busy = true;
+      const btn = $('#pl-setup-play');
+      btn.disabled = true;
+      const chips = $$('#player-setup-moves .mv');
+      chips.forEach((c) => c.classList.remove('done', 'current'));
+      this.cube.setState(Cube.solved());
+      this.idx = 0; this.mark(-1);
+      await new Promise((r) => setTimeout(r, 300));
+      for (let i = 0; i < this.setupMoves.length; i++) {
+        if (!this.open) break;
+        chips.forEach((c, j) => { c.classList.toggle('current', j === i); c.classList.toggle('done', j < i); });
+        await this.cube.turn(this.setupMoves[i], Math.max(120, this.speed() * 0.7));
+      }
+      chips.forEach((c) => c.classList.remove('current', 'done'));
+      // garante o estado exato do caso (mesmo se algo interrompeu)
+      this.cube.setState(this.start);
+      this.idx = 0; this.busy = false; btn.disabled = false; this.mark();
+    },
   };
+
+  /** Junta movimentos repetidos da mesma camada: "U U" → "U2", "R R'" → (nada). */
+  function simplifyAlg(alg) {
+    const out = [];
+    for (const m of Cube.parse(alg)) {
+      const q = m.amount === -1 ? 3 : m.amount; // quartos de volta
+      const last = out[out.length - 1];
+      if (last && last.base === m.base) {
+        last.q = (last.q + q) % 4;
+        if (!last.q) out.pop();
+      } else out.push({ base: m.base, q });
+    }
+    return out.map((m) => Cube.moveToText({ base: m.base, amount: m.q === 3 ? -1 : m.q })).join(' ');
+  }
 
   /* ---------- renderers ---------- */
   function caseCard(c, { kicker, compact } = {}) {
@@ -330,7 +381,7 @@
     btn.setAttribute('aria-label', `${c.title}: ${c.alg}. ${t('x.watch')}`);
     btn.addEventListener('click', () => {
       player.returnFocus = btn;
-      player.show({ kicker, title: c.title, alg: c.alg, state: c.state, note: c.playerNote || c.note || '' });
+      player.show({ kicker, title: c.title, alg: c.alg, state: c.state, note: c.playerNote || c.note || '', setup: c.setup });
     });
     return btn;
   }

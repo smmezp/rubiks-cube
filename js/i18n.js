@@ -177,6 +177,12 @@
     'x.notationCfop': 'CFOP notation',
     'x.watch': 'Watch animation',
     'x.toTop': 'Back to top',
+    'x.solution': 'Solution',
+    'x.setup': 'Setup',
+    'x.showSetup': '▶ Show setup',
+    'x.copy': 'Copy',
+    'x.copied': 'Copied!',
+    'x.setupHint': 'Start from a <b>solved</b> cube (yellow on top, blue in front) and do these moves to get this case — great for practicing it.',
   };
 
   const pt = {
@@ -349,6 +355,12 @@
     'x.notationCfop': 'Notação CFOP',
     'x.watch': 'Ver animação',
     'x.toTop': 'Voltar ao topo',
+    'x.solution': 'Solução',
+    'x.setup': 'Setup',
+    'x.showSetup': '▶ Ver setup',
+    'x.copy': 'Copiar',
+    'x.copied': 'Copiado!',
+    'x.setupHint': 'Comece com o cubo <b>resolvido</b> (amarelo em cima, azul na frente) e faça esses movimentos para montar este caso — ótimo para treinar.',
   };
 
   /* ---------- conteúdo dos passos / notação (listas paralelas) ---------- */
