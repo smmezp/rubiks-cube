@@ -45,6 +45,7 @@ build.js          prepara para publicar (npm run build)
 css/style.css     estilos e temas
 css/library.css   biblioteca: algoritmos aprendidos
 css/timer.css     página do timer
+css/timer-stats.css  timer: gráfico, recordes, sessões, detalhes
 js/cube.js        motor do cubo (estado, movimentos, desenhos SVG)
 js/cube3d.js      cubo 3D em CSS com animação das camadas
 js/data.js        algoritmos F2L / OLL / PLL

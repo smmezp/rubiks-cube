@@ -182,6 +182,7 @@ body.is-timing .tm-status { opacity: 0; }
   .tm-scramble { grid-template-columns: 1fr; grid-template-areas: "label" "text" "actions"; padding: 14px 16px; }
   .tm-stage { min-height: 46vh; border-radius: 22px; }
   .tm-side { grid-template-columns: 1fr; }
+  .tm-side .tm-list-card { grid-column: auto; }
   .tm-stats { grid-template-columns: repeat(3, 1fr); }
 }
 @media (prefers-reduced-motion: reduce) {

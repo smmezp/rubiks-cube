@@ -29,10 +29,11 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="css/style.css?v=202611211641" />
-  <link rel="stylesheet" href="css/timer.css?v=202611211641" />
-  <link rel="stylesheet" href="css/polish.css?v=202611211641" />
-  <link rel="stylesheet" href="css/responsive.css?v=202611211641" />
+  <link rel="stylesheet" href="css/style.css?v=202611211652" />
+  <link rel="stylesheet" href="css/timer.css?v=202611211652" />
+  <link rel="stylesheet" href="css/polish.css?v=202611211652" />
+  <link rel="stylesheet" href="css/responsive.css?v=202611211652" />
+  <link rel="stylesheet" href="css/timer-stats.css?v=202611211652" />
 </head>
 <body class="timer-page">
   <header class="topbar">
@@ -80,6 +81,7 @@
 
     <!-- área do timer: segurar e soltar -->
     <section class="tm-stage" id="tm-pad" data-phase="idle" tabindex="0" data-i18n-aria="tm.padAria" aria-label="Timer">
+      <p class="tm-pb" id="tm-pb" role="status" aria-live="polite" hidden></p>
       <output class="tm-time" id="tm-time">0.00</output>
       <p class="tm-status" id="tm-status"></p>
       <div class="tm-last" id="tm-last" hidden>
@@ -88,6 +90,19 @@
         <button type="button" data-pen="DNF" class="tm-pen">DNF</button>
         <button type="button" data-pen="del" class="tm-pen tm-pen-del" data-i18n-aria="tm.delete" aria-label="Delete">×</button>
       </div>
+      <p class="tm-keys" data-i18n="tm.keys"></p>
+    </section>
+
+    <!-- gráfico de evolução -->
+    <section class="tm-card tm-chart-card" aria-labelledby="tm-chart-title">
+      <div class="tm-chart-head">
+        <h2 id="tm-chart-title" data-i18n="tm.progress">Progress</h2>
+        <ul class="tm-legend" aria-hidden="true">
+          <li><i class="lg-single"></i><span data-i18n="tm.legendSingles">Single</span></li>
+          <li><i class="lg-ao5"></i><span>ao5</span></li>
+        </ul>
+      </div>
+      <div class="tm-chart" id="tm-chart"></div>
     </section>
 
     <!-- painel lateral -->
@@ -97,33 +112,83 @@
         <div class="tm-cube-info">
           <p class="tm-label" data-i18n="tm.preview">How it should look</p>
           <button type="button" class="tm-btn tm-btn-small" id="tm-watch" data-i18n="tm.watch">Watch it scramble</button>
-          <label class="tm-switch">
-            <input type="checkbox" id="tm-inspection" />
-            <span class="tm-switch-track" aria-hidden="true"></span>
-            <span data-i18n="tm.inspection">15 s inspection</span>
-          </label>
         </div>
       </div>
 
+      <div class="tm-card tm-options">
+        <label class="tm-switch">
+          <input type="checkbox" id="tm-inspection" />
+          <span class="tm-switch-track" aria-hidden="true"></span>
+          <span data-i18n="tm.inspection">15 s inspection</span>
+        </label>
+        <label class="tm-switch">
+          <input type="checkbox" id="tm-hide" />
+          <span class="tm-switch-track" aria-hidden="true"></span>
+          <span data-i18n="tm.hideTime">Hide time while solving</span>
+        </label>
+      </div>
+
       <div class="tm-card">
-        <dl class="tm-stats">
-          <div><dt data-i18n="tm.best">Best</dt><dd id="st-best">—</dd></div>
-          <div><dt>ao5</dt><dd id="st-ao5">—</dd></div>
-          <div><dt>ao12</dt><dd id="st-ao12">—</dd></div>
-          <div><dt>ao100</dt><dd id="st-ao100">—</dd></div>
-          <div><dt data-i18n="tm.mean">Mean</dt><dd id="st-mean">—</dd></div>
-          <div><dt data-i18n="tm.solves">Solves</dt><dd id="st-count">0</dd></div>
-        </dl>
+        <table class="tm-stats-table">
+          <thead><tr><th></th><th data-i18n="tm.current">Current</th><th data-i18n="tm.bestCol">Best</th></tr></thead>
+          <tbody>
+            <tr><th data-i18n="tm.single">Single</th><td id="st-last">—</td><td id="st-best">—</td></tr>
+            <tr><th>ao5</th><td id="st-ao5">—</td><td id="st-bao5">—</td></tr>
+            <tr><th>ao12</th><td id="st-ao12">—</td><td id="st-bao12">—</td></tr>
+            <tr><th>ao100</th><td id="st-ao100">—</td><td id="st-bao100">—</td></tr>
+          </tbody>
+        </table>
+        <p class="tm-summary"><span data-i18n="tm.mean">Mean</span> <b id="st-mean">—</b> · <span data-i18n="tm.solves">Solves</span> <b id="st-count">0</b></p>
       </div>
 
       <div class="tm-card tm-list-card">
+        <div class="tm-session">
+          <label class="sr-only" for="tm-session" data-i18n="tm.session">Session</label>
+          <select id="tm-session" class="tm-select"></select>
+          <button type="button" class="tm-icon-btn" id="tm-session-new" data-i18n-title="tm.newSession" data-i18n-aria="tm.newSession">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+          </button>
+          <button type="button" class="tm-icon-btn" id="tm-session-rename" data-i18n-title="tm.rename" data-i18n-aria="tm.rename">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16v4zM14 6l4 4" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg>
+          </button>
+          <button type="button" class="tm-icon-btn" id="tm-session-delete" data-i18n-title="tm.deleteSession" data-i18n-aria="tm.deleteSession">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14M10 7V5h4v2M7 7l1 12h8l1-12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
         <div class="tm-list-head">
           <h2 data-i18n="tm.times">Times</h2>
-          <button type="button" class="tm-link" id="tm-clear" data-i18n="tm.clear">Clear all</button>
+          <div class="tm-list-actions">
+            <button type="button" class="tm-link" id="tm-export" data-i18n="tm.export">Export</button>
+            <button type="button" class="tm-link" id="tm-clear" data-i18n="tm.clear">Clear all</button>
+          </div>
         </div>
         <ol class="tm-list" id="tm-list"></ol>
       </div>
     </aside>
+
+    <!-- detalhes de um tempo -->
+    <dialog class="tm-dialog" id="tm-detail" aria-labelledby="tm-detail-title">
+      <form method="dialog" class="tm-dialog-inner">
+        <div class="tm-dialog-head">
+          <h2 id="tm-detail-title"></h2>
+          <button class="tm-icon-btn" value="close" data-i18n-aria="tm.close" aria-label="Close">×</button>
+        </div>
+        <p class="tm-detail-time" id="tm-detail-time"></p>
+        <dl class="tm-detail-meta">
+          <div><dt data-i18n="tm.date">Date</dt><dd id="tm-detail-date"></dd></div>
+          <div><dt data-i18n="tm.ao5Here">ao5 here</dt><dd id="tm-detail-ao5"></dd></div>
+        </dl>
+        <p class="tm-label" data-i18n="tm.scramble">Scramble</p>
+        <p class="tm-detail-scr" id="tm-detail-scr"></p>
+        <div class="tm-dialog-actions">
+          <button type="button" class="tm-pen" data-dpen="">OK</button>
+          <button type="button" class="tm-pen" data-dpen="+2">+2</button>
+          <button type="button" class="tm-pen" data-dpen="DNF">DNF</button>
+          <button type="button" class="tm-btn tm-btn-small" id="tm-detail-copy" data-i18n="tm.copyScramble">Copy scramble</button>
+          <button type="button" class="tm-btn tm-btn-small tm-danger" id="tm-detail-del" data-i18n="tm.delete">Delete</button>
+        </div>
+      </form>
+    </dialog>
   </main>
 
   <footer class="footer tm-footer">
@@ -132,10 +197,10 @@
     </div>
   </footer>
 
-  <script src="js/i18n.js?v=202611211641"></script>
-  <script src="js/cube.js?v=202611211641"></script>
-  <script src="js/cube3d.js?v=202611211641"></script>
-  <script src="js/timer.js?v=202611211641"></script>
+  <script src="js/i18n.js?v=202611211652"></script>
+  <script src="js/cube.js?v=202611211652"></script>
+  <script src="js/cube3d.js?v=202611211652"></script>
+  <script src="js/timer.js?v=202611211652"></script>
   <div id="render-ready" hidden></div>
 </body>
 </html>
