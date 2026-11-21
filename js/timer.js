@@ -140,7 +140,31 @@
     pad.dataset.phase = p;
     document.body.classList.toggle('is-timing', p === 'running' || p === 'ready' || p === 'hold' || p === 'inspect');
     showStatus();
+    // tela ligada: durante inspeção/resolução, e um tempinho depois para embaralhar a próxima
+    if (p === 'idle' || p === 'stopped') keepAwakeFor(2 * 60 * 1000);
+    else keepAwake();
   }
+
+  /* ---------- não deixar a tela do celular apagar (Screen Wake Lock) ---------- */
+  let wakeLock = null, wakeTimer = 0, wakeWanted = false;
+  async function keepAwake() {
+    wakeWanted = true;
+    clearTimeout(wakeTimer);
+    if (wakeLock || !('wakeLock' in navigator) || document.visibilityState !== 'visible') return;
+    try {
+      wakeLock = await navigator.wakeLock.request('screen');
+      wakeLock.addEventListener('release', () => { wakeLock = null; });
+    } catch (e) { wakeLock = null; /* bateria fraca, permissão ou navegador sem suporte */ }
+  }
+  function keepAwakeFor(ms) {
+    if (!wakeLock && !wakeWanted) return; // nunca resolveu nada: não precisa segurar a tela
+    clearTimeout(wakeTimer);
+    wakeTimer = setTimeout(() => { wakeWanted = false; if (wakeLock) wakeLock.release().catch(() => {}); }, ms);
+  }
+  // o sistema solta a trava quando a aba fica oculta; ao voltar, pega de novo se ainda precisa
+  document.addEventListener('visibilitychange', () => {
+    if (document.visibilityState === 'visible' && wakeWanted) keepAwake().then(() => { if (phase === 'idle') keepAwakeFor(2 * 60 * 1000); });
+  });
   function showStatus() {
     const msg = {
       idle: inspectionEl.checked ? t(touch ? 'tm.hintInspectTouch' : 'tm.hintInspect') : t(touch ? 'tm.hintTouch' : 'tm.hint'),
@@ -152,11 +176,16 @@
     }[phase] ?? '';
     statusEl.innerHTML = msg;
   }
-  const draw = (txt) => { timeEl.textContent = txt; };
+  // isText: palavras ("Resolvendo…") usam um tamanho menor que os números, para caber na caixa
+  const draw = (txt, isText = false) => {
+    if (timeEl.textContent !== txt) timeEl.textContent = txt;
+    timeEl.classList.toggle('is-text', isText);
+  };
 
   function loopRun() {
     // "esconder o tempo": mostra só "Resolvendo…" até parar
-    draw(hideEl.checked ? t('tm.solving') : fmt(performance.now() - startAt, 2));
+    if (hideEl.checked) draw(t('tm.solving'), true);
+    else draw(fmt(performance.now() - startAt, 2));
     raf = requestAnimationFrame(loopRun);
   }
   function loopInspect() {

@@ -136,3 +136,16 @@ body.is-timing .tm-keys { opacity: 0; }
 @media (prefers-reduced-motion: reduce) {
   .tm-pb, .tm-stage.is-pb .tm-time, .tm-dialog[open] { animation: none; }
 }
+
+/* "Resolvendo…" (tempo escondido): palavra menor que os números, sempre dentro da caixa */
+.tm-time.is-text {
+  max-width: 100%;
+  font-family: "Bricolage Grotesque", "Onest", sans-serif;
+  font-size: clamp(2.2rem, 7vw, 4.2rem);
+  letter-spacing: -.02em;
+  text-align: center;
+  overflow-wrap: anywhere;
+  animation: solvingPulse 1.6s ease-in-out infinite;
+}
+@keyframes solvingPulse { 50% { opacity: .55; } }
+@media (prefers-reduced-motion: reduce) { .tm-time.is-text { animation: none; } }
