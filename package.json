@@ -5,6 +5,7 @@
   "author": "Medeiros",
   "private": true,
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "bump": "node bump.js"
   }
 }

@@ -23,6 +23,9 @@ Abra <http://localhost:5173>.
 
 ## Publicar no GitHub Pages
 
+Antes de cada `git push`, rode `npm run bump` para atualizar a versão dos arquivos
+(assim ninguém fica com CSS/JS antigos em cache).
+
 O site é 100% estático (HTML + CSS + JS). Basta enviar a pasta para um repositório e ativar
 **Settings → Pages → Deploy from a branch → `main` / root**. O `server.js` só é usado localmente.
 
